@@ -1,11 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from '../MOdal/Modal';
 
-const InProgres = ({ inputOpen, handleOpen, handleClose, handleAdd, task }) => {
+const InProgres = ({handleAdd, task }) => {
+      const [inputOpen, setInputOpen] = useState(false);
+       
+        const handleOpen = () => {
+            setInputOpen(true);
+        }
+        const handleClose = () => {
+            setInputOpen(false);
+        }
     return (
         <div>
              <div className='bg-white border border-white rounded-lg h-96 p-6 overflow-y-auto' >
-            <h1 className='font-bold mb-2 text-xl'>To-Do</h1>
+            <h1 className='font-bold mb-2 text-xl'>In progress</h1>
             <div className='flex flex-col gap-4'>
                 {
                     task?.map((t) => <div>
@@ -17,7 +25,7 @@ const InProgres = ({ inputOpen, handleOpen, handleClose, handleAdd, task }) => {
             </div>
             {
                 inputOpen && <>
-                    <form onSubmit={(e) => handleAdd(e, 'inProgress')} className='border rounded-lg p-2 flex flex-col mt-4 gap-3'>
+                    <form onSubmit={(e) => handleAdd(e, 'inProgress',setInputOpen(false))} className='border rounded-lg p-2 flex flex-col mt-4 gap-3'>
                         <input type="text" required name='title' placeholder="Enter A Title" className="input mt-4 input-bordered w-full " />
                         <textarea required className="textarea w-full textarea-bordered" name='description' placeholder="Enter Description"></textarea>
                         <div className='flex justify-between'>

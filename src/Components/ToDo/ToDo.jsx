@@ -1,13 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from '../MOdal/Modal';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
-const ToDo = ({ inputOpen, handleOpen, handleClose, handleAdd, task }) => {
+const ToDo = ({task,handleAdd,user}) => {
+    const [inputOpen, setInputOpen] = useState(false);
+   
+    const handleOpen = () => {
+        setInputOpen(true);
+    }
+
+    const handleClose = () => {
+        setInputOpen(false);
+    }
+
+
+    const { data: tasks, refetch } = useQuery({
+        queryKey: ['tasks',"category","email"],
+        queryFn: async () => {
+          const { data } = await axios.get(`${import.meta.env.VITE_API_URL}tasks?category=${"todo"}&email=${user?.email}`)
+          return data;
+        },
+      })
+      console.log(tasks);
     return (
         <div className='bg-white border border-white rounded-lg h-96 p-6 overflow-y-auto' >
             <h1 className='font-bold mb-2 text-xl'>To-Do</h1>
             <div className='flex flex-col gap-4'>
                 {
-                    task?.map((t) => <div>
+                    tasks?.map((t) => <div>
                         <div onClick={() => document.getElementById('my_modal_5').showModal()} className='w-full border border-gray-200 rounded-md py-4 px-2 '>
                             <h1>{t.title}</h1>
                         </div>
@@ -16,7 +37,7 @@ const ToDo = ({ inputOpen, handleOpen, handleClose, handleAdd, task }) => {
             </div>
             {
                 inputOpen && <>
-                    <form onSubmit={(e) => handleAdd(e, 'todo')} className='border rounded-lg p-2 flex flex-col mt-4 gap-3'>
+                    <form onSubmit={(e) => handleAdd(e, 'todo',setInputOpen(false))} className='border rounded-lg p-2 flex flex-col mt-4 gap-3'>
                         <input type="text" required name='title' placeholder="Enter A Title" className="input mt-4 input-bordered w-full " />
                         <textarea required className="textarea w-full textarea-bordered" name='description' placeholder="Enter Description"></textarea>
                         <div className='flex justify-between'>

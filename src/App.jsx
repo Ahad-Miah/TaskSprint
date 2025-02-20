@@ -39,7 +39,7 @@ function App() {
       </div>
       <div>
         {
-          user?<TaskManager></TaskManager>:<Login googleLogin={googleLogin}></Login>
+          user?<TaskManager user={user}></TaskManager>:<Login googleLogin={googleLogin}></Login>
         }   
       </div>
     </div>
