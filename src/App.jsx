@@ -3,6 +3,7 @@ import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup } from "firebas
 import { auth } from './firebase.init';
 import { useEffect } from 'react';
 import { useState } from 'react';
+import TaskManager from './Components/TaskManager/TaskManager';
 
 const provider = new GoogleAuthProvider();
 function App() {
@@ -37,7 +38,9 @@ function App() {
         <p className='text-center bg-gradient-to-r  from-purple-500 to-pink-500 text-transparent bg-clip-text'>Boost Productivity with smart task handling</p>
       </div>
       <div>
-        <Login googleLogin={googleLogin}></Login>
+        {
+          user?<TaskManager></TaskManager>:<Login googleLogin={googleLogin}></Login>
+        }   
       </div>
     </div>
   )
