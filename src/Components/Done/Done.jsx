@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import Modal from '../MOdal/Modal';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
-const Done = ({handleAdd, task }) => {
+const Done = ({handleAdd, task,user }) => {
     const [inputOpen, setInputOpen] = useState(false);
        
         const handleOpen = () => {
@@ -10,13 +12,24 @@ const Done = ({handleAdd, task }) => {
         const handleClose = () => {
             setInputOpen(false);
         }
+
+        const { data: doneTasks, refetch: refetchTodo } = useQuery({
+            queryKey: ['tasks', 'done', user?.email],  
+            enabled: !!user?.email, 
+            queryFn: async () => {
+                const { data } = await axios.get(
+                    `${import.meta.env.VITE_API_URL}tasks?category=done&email=${user?.email}`
+                );
+                return data;
+            },
+        });
     return (
         <div>
         <div className='bg-white border border-white rounded-lg h-96 p-6 overflow-y-auto' >
        <h1 className='font-bold mb-2 text-xl'>Done</h1>
        <div className='flex flex-col gap-4'>
            {
-               task?.map((t) => <div>
+               doneTasks?.map((t) => <div>
                    <div onClick={() => document.getElementById('my_modal_5').showModal()} className='w-full border border-gray-200 rounded-md py-4 px-2 '>
                        <h1>{t.title}</h1>
                    </div>

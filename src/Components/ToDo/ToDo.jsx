@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Modal from '../MOdal/Modal';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-
 const ToDo = ({task,handleAdd,user}) => {
     const [inputOpen, setInputOpen] = useState(false);
    
@@ -15,20 +14,22 @@ const ToDo = ({task,handleAdd,user}) => {
     }
 
 
-    const { data: tasks, refetch } = useQuery({
-        queryKey: ['tasks',"category","email"],
+    const { data: todoTasks, refetch: refetchTodo } = useQuery({
+        queryKey: ['tasks', 'todo', user?.email],  
+        enabled: !!user?.email, 
         queryFn: async () => {
-          const { data } = await axios.get(`${import.meta.env.VITE_API_URL}tasks?category=${"todo"}&email=${user?.email}`)
-          return data;
+            const { data } = await axios.get(
+                `${import.meta.env.VITE_API_URL}tasks?category=todo&email=${user?.email}`
+            );
+            return data;
         },
-      })
-      console.log(tasks);
+    });
     return (
         <div className='bg-white border border-white rounded-lg h-96 p-6 overflow-y-auto' >
             <h1 className='font-bold mb-2 text-xl'>To-Do</h1>
             <div className='flex flex-col gap-4'>
                 {
-                    tasks?.map((t) => <div>
+                    todoTasks?.map((t) => <div>
                         <div onClick={() => document.getElementById('my_modal_5').showModal()} className='w-full border border-gray-200 rounded-md py-4 px-2 '>
                             <h1>{t.title}</h1>
                         </div>

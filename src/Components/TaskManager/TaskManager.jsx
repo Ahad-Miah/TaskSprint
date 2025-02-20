@@ -39,8 +39,8 @@ const TaskManager = ({user}) => {
     return (
         <div className='min-h-screen bg-gray-100 py-14 p-5 grid grid-cols-1 md:grid-cols-3 justify-center gap-5 px-10'>
             <ToDo user={user} handleAdd={handleAdd}  task={task}></ToDo>
-            <InProgres handleAdd={handleAdd} task={task} ></InProgres>
-            <Done handleAdd={handleAdd}  task={task} ></Done>
+            <InProgres user={user} handleAdd={handleAdd} task={task} ></InProgres>
+            <Done user={user} handleAdd={handleAdd}  task={task} ></Done>
         </div>
     );
 };
