@@ -50,8 +50,8 @@ const Done = ({handleAdd, task,user }) => {
        {
            inputOpen && <>
                <form onSubmit={(e) => handleAdd(e, 'done',setInputOpen(false))} className='border rounded-lg p-2 flex flex-col mt-4 gap-3'>
-                   <input type="text" required name='title' placeholder="Enter A Title" className="input mt-4 input-bordered w-full " />
-                   <textarea required className="textarea w-full textarea-bordered" name='description' placeholder="Enter Description"></textarea>
+                   <input type="text" maxLength={50} required name='title' placeholder="Enter A Title" className="input mt-4 input-bordered w-full " />
+                   <textarea  maxLength={200} className="textarea w-full textarea-bordered" name='description' placeholder="Enter Description"></textarea>
                    <div className='flex justify-between'>
                        <button className='bg-blue-700 w-1/3  mt-5 p-3 rounded-lg font font-semibold text-white'>Add Task</button>
                        <button onClick={handleClose} className='bg-blue-700 w-1/3  mt-5 p-3 rounded-lg font font-semibold text-white'>X</button>
