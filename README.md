@@ -23,4 +23,4 @@ TaskSprint is a modern task management application that allows users to organize
 ## 🛠 Installation Steps
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/Ahad-Miah/TaskSprint]
+   git clone https://github.com/Ahad-Miah/TaskSprint
