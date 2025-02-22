@@ -4,6 +4,7 @@ import { auth } from './firebase.init';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import TaskManager from './Components/TaskManager/TaskManager';
+import axios from 'axios';
 
 const provider = new GoogleAuthProvider();
 function App() {
@@ -19,9 +20,20 @@ function App() {
 
   useEffect(() => {
 
-    const unsubscribe = onAuthStateChanged(auth, CurrentUser => {
+    const unsubscribe = onAuthStateChanged(auth,async CurrentUser => {
       setUser(CurrentUser);
       setLoading(false);
+      if(CurrentUser?.email){
+        await axios.post(`${import.meta.env.VITE_API_URL}users/${CurrentUser?.email}`,
+            {
+                name: CurrentUser?.displayName,
+                email: CurrentUser?.email,
+                userId: CurrentUser?.uid,
+            })
+            .then(res=>{
+                
+            })
+       }
     })
 
     return () => {
