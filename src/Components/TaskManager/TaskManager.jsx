@@ -5,6 +5,8 @@ import Done from '../Done/Done';
 import axios from 'axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../firebase.init';
 
 const TaskManager = ({user}) => {
     const [task, setTask] = useState([]);
@@ -33,16 +35,21 @@ const TaskManager = ({user}) => {
         addTask(newTask); 
         e.target.reset();
     };
-    
-    // useEffect(() => {
-    //     console.log(task);
-    // }, [task]);
+  
+    const logOut=()=>{
+        signOut(auth)
+    }
     return (
-        <div className='min-h-screen bg-gray-100 py-14 p-5 grid grid-cols-1 md:grid-cols-3 justify-center gap-5 px-10'>
+       <div className='min-h-screen bg-gray-100 py-14 p-5 '>
+        <div className='flex justify-center'>
+        <button onClick={logOut} className='btn bg-blue-700 text-white'>LogOut</button>
+        </div>
+         <div className='grid grid-cols-1 md:grid-cols-3 justify-center gap-5 px-10 mt-8'>
             <ToDo user={user} handleAdd={handleAdd}  task={task}></ToDo>
             <InProgres user={user} handleAdd={handleAdd} task={task} ></InProgres>
             <Done user={user} handleAdd={handleAdd}  task={task} ></Done>
         </div>
+       </div>
     );
 };
 
