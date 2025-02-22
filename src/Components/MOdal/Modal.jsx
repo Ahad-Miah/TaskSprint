@@ -2,6 +2,7 @@ import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/re
 import axios from 'axios';
 import React from 'react';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 
 const Modal = ({ setModalOpen, task,id }) => {
 
@@ -36,14 +37,51 @@ const Modal = ({ setModalOpen, task,id }) => {
         updateTask(taskToUpdate);
         setModalOpen(false);
     };
+
+    const { mutate: deleteTask } = useMutation({
+        mutationFn: async (id) => {
+            const { data } = await axios.delete(`${import.meta.env.VITE_API_URL}tasks/${id}`);
+            return data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['id']);
+            refetch();
+            toast.success("Deleted Successfully");
+            setModalOpen(false);
+        },
+    });
     
+    const handleDelete=(id)=>{
+        
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Swal.fire({
+                title: "Deleted!",
+                text: "Your file has been deleted.",
+                icon: "success"
+              });
+              deleteTask(id);
+            }
+          });
+    }
     return (
         <div>
             {
                 isLoading ? <span className="loading loading-bars loading-lg"></span>:  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                 <div className="bg-white w-full max-w-lg p-6 rounded-lg shadow-lg h-[500px] overflow-y-auto">
+                    <div className='flex justify-between'>
                     <h3 className="text-lg font-bold mb-4 text-gray-800">{task}</h3>
-                   <button className='btn-xs btn'>Delete</button>
+                    <button onClick={()=>setModalOpen(false)} className='btn  rounded-full bg-red-600 text-white flex justify-center items-center text-lg px-3 '>X</button>
+                    </div>
+                   <button onClick={()=>handleDelete(singleTask._id)} className='btn-xs btn'>Delete</button>
 
                     <form onSubmit={handleUpdate} className='border rounded-lg p-2 flex flex-col mt-4 gap-3'>
                         <select name='category' className="select select-ghost w-full ">
@@ -57,12 +95,6 @@ const Modal = ({ setModalOpen, task,id }) => {
                         <textarea required defaultValue={singleTask?.description} className="textarea w-full textarea-bordered" name='description' placeholder="Enter Description"></textarea>
 
                         <div className="flex justify-end space-x-4">
-                        <button
-                            onClick={() => setModalOpen(false)}
-                            className="px-4 py-2 bg-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-400 transition duration-300"
-                        >
-                            Cancel
-                        </button>
                         <button 
                             className="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-md hover:bg-green-600 transition duration-300"
                         >
