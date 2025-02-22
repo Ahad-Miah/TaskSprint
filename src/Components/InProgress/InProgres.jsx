@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import Modal from '../MOdal/Modal';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import Modal from '../MOdal/Modal';
 
 const InProgres = ({handleAdd, task,user }) => {
       const [inputOpen, setInputOpen] = useState(false);
+    const [isModalOpen, setModalOpen] = useState(false);
+     const [id, setId] = useState();
        
         const handleOpen = () => {
             setInputOpen(true);
@@ -13,7 +15,7 @@ const InProgres = ({handleAdd, task,user }) => {
             setInputOpen(false);
         }
 
-        const { data: inProgressTasks, refetch: refetchInProgress } = useQuery({
+        const { data: inProgressTasks, isLoading, refetch: refetchInProgress } = useQuery({
             queryKey: ['tasks', 'inProgress', user?.email],  
             enabled: !!user?.email, 
             queryFn: async () => {
@@ -22,20 +24,28 @@ const InProgres = ({handleAdd, task,user }) => {
                 );
                 return data;
             },
-        });        
+        });  
+        const handleId = (id) => {
+            setId(id);
+        }      
     return (
         <div>
              <div className='bg-white border border-white rounded-lg h-96 p-6 overflow-y-auto' >
             <h1 className='font-bold mb-2 text-xl'>In progress</h1>
-            <div className='flex flex-col gap-4'>
+            {
+                isLoading?<div className='flex justify-center items-center'><span className="loading loading-bars loading-lg"></span></div>
+                :
+                <div className='flex flex-col gap-4'>
                 {
                     inProgressTasks?.map((t) => <div>
-                        <div onClick={() => document.getElementById('my_modal_5').showModal()} className='w-full border border-gray-200 rounded-md py-4 px-2 '>
+                        <div onClick={() => {setModalOpen(true);handleId(t._id)}} className='w-full border border-gray-200 rounded-md py-4 px-2 '>
                             <h1>{t.title}</h1>
                         </div>
                     </div>)
                 }
             </div>
+            }
+           
             {
                 inputOpen && <>
                     <form onSubmit={(e) => handleAdd(e, 'inProgress',setInputOpen(false))} className='border rounded-lg p-2 flex flex-col mt-4 gap-3'>
@@ -51,8 +61,10 @@ const InProgres = ({handleAdd, task,user }) => {
             <div>
                 <button onClick={handleOpen} className={`bg-blue-700 w-full mt-5 p-3 rounded-lg font font-semibold text-white ${inputOpen ? "hidden" : ""}`}>Add a Card +</button>
             </div>
-            <Modal></Modal>
         </div>
+        {
+            isModalOpen && <Modal id={id} setModalOpen={setModalOpen} task={"IN Progress"}></Modal>
+        }
         </div>
     );
 };

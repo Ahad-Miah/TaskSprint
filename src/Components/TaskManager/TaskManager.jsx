@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import Modal from '../MOdal/Modal';
 import ToDo from '../ToDo/ToDo';
 import InProgres from '../InProgress/InProgres';
 import Done from '../Done/Done';
 import axios from 'axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 
 const TaskManager = ({user}) => {
     const [task, setTask] = useState([]);
@@ -18,6 +18,7 @@ const TaskManager = ({user}) => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries(['newTask']); 
+            toast.success("Task added Successfully");
         },
     });
 

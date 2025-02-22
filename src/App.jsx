@@ -39,9 +39,14 @@ function App() {
       </div>
       <div>
         {
-          user?<TaskManager user={user}></TaskManager>:<Login googleLogin={googleLogin}></Login>
-        }   
+          loading? <div className='flex justify-center items-center min-h-screen'> <span className="loading loading-bars loading-lg text-center"></span></div> : <div>
+          {
+            user?<TaskManager user={user}></TaskManager>:<Login googleLogin={googleLogin}></Login>
+          }   
+        </div>
+        }
       </div>
+     
     </div>
   )
 }

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import Modal from '../MOdal/Modal';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-const ToDo = ({task,handleAdd,user}) => {
+import Modal from '../MOdal/Modal';
+const ToDo = ({ task, handleAdd, user }) => {
     const [inputOpen, setInputOpen] = useState(false);
-   
+    const [id, setId] = useState();
+    const [isModalOpen, setModalOpen] = useState(false);
+
     const handleOpen = () => {
         setInputOpen(true);
     }
@@ -14,9 +16,9 @@ const ToDo = ({task,handleAdd,user}) => {
     }
 
 
-    const { data: todoTasks, refetch: refetchTodo } = useQuery({
-        queryKey: ['tasks', 'todo', user?.email],  
-        enabled: !!user?.email, 
+    const { data: todoTasks,isLoading, refetch } = useQuery({
+        queryKey: ['tasks', 'todo', user?.email],
+        enabled: !!user?.email,
         queryFn: async () => {
             const { data } = await axios.get(
                 `${import.meta.env.VITE_API_URL}tasks?category=todo&email=${user?.email}`
@@ -24,21 +26,33 @@ const ToDo = ({task,handleAdd,user}) => {
             return data;
         },
     });
+
+    const handleId = (id) => {
+        setId(id);
+    }
     return (
         <div className='bg-white border border-white rounded-lg h-96 p-6 overflow-y-auto' >
             <h1 className='font-bold mb-2 text-xl'>To-Do</h1>
-            <div className='flex flex-col gap-4'>
+            {
+                isLoading? <div className='flex justify-center items-center'><span className="loading loading-bars loading-lg"></span></div>
+                : 
+                <div className='flex flex-col gap-4'>
                 {
-                    todoTasks?.map((t) => <div>
-                        <div onClick={() => document.getElementById('my_modal_5').showModal()} className='w-full border border-gray-200 rounded-md py-4 px-2 '>
+                    todoTasks?.map((t) => <div onClick={() => {setModalOpen(true);handleId(t._id)}}>
+                        <div
+                            onClick={() => { }}
+                            className='w-full border border-gray-200 rounded-md py-4 px-2 '
+                        >
                             <h1>{t.title}</h1>
                         </div>
                     </div>)
                 }
             </div>
+            }
+        
             {
                 inputOpen && <>
-                    <form onSubmit={(e) => handleAdd(e, 'todo',setInputOpen(false))} className='border rounded-lg p-2 flex flex-col mt-4 gap-3'>
+                    <form onSubmit={(e) => handleAdd(e, 'todo', setInputOpen(false))} className='border rounded-lg p-2 flex flex-col mt-4 gap-3'>
                         <input type="text" required name='title' placeholder="Enter A Title" className="input mt-4 input-bordered w-full " />
                         <textarea required className="textarea w-full textarea-bordered" name='description' placeholder="Enter Description"></textarea>
                         <div className='flex justify-between'>
@@ -52,7 +66,12 @@ const ToDo = ({task,handleAdd,user}) => {
             <div>
                 <button onClick={handleOpen} className={`bg-blue-700 w-full mt-5 p-3 rounded-lg font font-semibold text-white ${inputOpen ? "hidden" : ""}`}>Add a Card +</button>
             </div>
-            <Modal></Modal>
+            {/* modal */}
+            {
+                isModalOpen &&    
+            <Modal refetch={refetch} id={id} setModalOpen={setModalOpen} task={"Todo"}></Modal>
+            }
+
         </div>
     );
 };
